@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertOctagon, BellRing, Bot, Clock3, Filter, MapPin, MessageSquarePlus, Plus, Radio, RefreshCw, Search, ShieldAlert, Siren, Users, Volume2, VolumeX, X } from 'lucide-react';
 import { api, API_URL, authHeaders, socketUrl } from '../api.js';
 import StatusBadge from '../components/StatusBadge.jsx';
+import { BRAND } from '../brand.js';
 
 const priorities = ['ALL','P0','P1','P2','P3'];
 const callTypes = ['GENERAL','911','TRAFFIC','WEAPONS','MEDICAL','FIRE','DISTURBANCE','PURSUIT','MISSING PERSON','SUSPICIOUS'];
@@ -60,7 +61,7 @@ export default function Dashboard() {
     const next = !voiceArmed;
     setVoiceArmed(next);
     if (next && 'speechSynthesis' in window) {
-      const test = new SpeechSynthesisUtterance('Shadow AI dispatch radio armed.');
+      const test = new SpeechSynthesisUtterance('Glenwood Metro AI dispatch radio armed.');
       test.volume = 0.55; test.rate = 0.95; speechSynthesis.speak(test);
     }
   }
@@ -117,11 +118,11 @@ export default function Dashboard() {
   }
 
   return <div>
-    <div className="page-heading advanced-heading"><div><p className="eyebrow">REAL-TIME INCIDENT COMMAND</p><h1>Shadow Operations Center</h1><p>Priority dispatch, field intelligence, alerts, and unit command in one live workspace.</p></div><div className="heading-actions"><button className="icon-button" onClick={load}><RefreshCw/> Sync</button><button className="button bolo-button" onClick={() => setModal('bolo')}><BellRing/> New BOLO</button><button className="button primary" onClick={() => setModal('incident')}><Plus/> New incident</button></div></div>
+    <div className="page-heading advanced-heading"><div><p className="eyebrow">GLENWOOD CITYWIDE INCIDENT COMMAND</p><h1>{BRAND.dispatchCenter}</h1><p>Police, fire, EMS, field intelligence, and municipal response in one live command workspace.</p></div><div className="heading-actions"><button className="icon-button" onClick={load}><RefreshCw/> Sync</button><button className="button bolo-button" onClick={() => setModal('bolo')}><BellRing/> New BOLO</button><button className="button primary" onClick={() => setModal('incident')}><Plus/> New incident</button></div></div>
     {error && <div className="alert">{error}</div>}
     {panic > 0 && <div className="panic-banner"><AlertOctagon/><div><strong>{panic} UNIT PANIC SIGNAL{panic > 1 ? 'S' : ''}</strong><span>Immediate assistance required. Locate and dispatch all available units.</span></div></div>}
 
-    <section className={`ai-dispatch-console ${voiceArmed ? 'armed' : ''}`}><div className="ai-orb"><Bot/></div><div className="grow"><span>SHADOW AI DISPATCH · {voiceArmed ? 'VOICE ARMED' : 'VOICE MUTED'}</span><strong>{latestDispatch ? `${latestDispatch.ten_code} · ${latestDispatch.call_title}` : 'Monitoring RPPhone emergency channels'}</strong><small>{latestDispatch?.dispatch_text || 'Every 911 and medical call is classified, prioritized, assigned, and broadcast in real time.'}</small></div>{latestDispatch && <button onClick={() => playDispatchVoice(latestDispatch)}><Volume2/> Replay</button>}<button className="voice-arm" onClick={toggleVoice}>{voiceArmed ? <Volume2/> : <VolumeX/>}{voiceArmed ? 'Armed' : 'Enable voice'}</button></section>
+    <section className={`ai-dispatch-console ${voiceArmed ? 'armed' : ''}`}><div className="ai-orb"><Bot/></div><div className="grow"><span>GLENWOOD METRO AI DISPATCH · {voiceArmed ? 'VOICE ARMED' : 'VOICE MUTED'}</span><strong>{latestDispatch ? `${latestDispatch.ten_code} · ${latestDispatch.call_title}` : 'Monitoring Glenwood emergency channels'}</strong><small>{latestDispatch?.dispatch_text || 'Every police, fire, and medical call is classified, prioritized, assigned, and broadcast in real time.'}</small></div>{latestDispatch && <button onClick={() => playDispatchVoice(latestDispatch)}><Volume2/> Replay</button>}<button className="voice-arm" onClick={toggleVoice}>{voiceArmed ? <Volume2/> : <VolumeX/>}{voiceArmed ? 'Armed' : 'Enable voice'}</button></section>
 
     <div className="metric-grid ops-metrics">
       <article><span>Active incidents</span><strong>{data.calls.length}</strong><Siren/></article>
@@ -148,7 +149,7 @@ export default function Dashboard() {
       </section>
     </div>
 
-    <section className="panel bolo-board"><div className="panel-heading"><div><BellRing/> Active BOLO intelligence</div><small>{data.bolos.length} alerts</small></div><div className="bolo-grid">{data.bolos.length ? data.bolos.map(bolo => <article className={`bolo-card priority-${bolo.priority.toLowerCase()}`} key={bolo.id}><div className="bolo-top"><span>{bolo.bolo_type}</span><Priority value={bolo.priority}/></div><h3>{bolo.subject}</h3><p>{bolo.description}</p><div className="bolo-meta"><span><MapPin/> {bolo.location_grid || 'Island-wide'}</span><span>Issued by {bolo.created_by_name || 'System'}</span></div><div className="bolo-actions"><button onClick={() => clearBolo(bolo)}>Mark located</button><button onClick={() => clearBolo(bolo, 'CANCELLED')}>Cancel</button></div></article>) : <Empty text="No active BOLO alerts"/>}</div></section>
+    <section className="panel bolo-board"><div className="panel-heading"><div><BellRing/> Active BOLO intelligence</div><small>{data.bolos.length} alerts</small></div><div className="bolo-grid">{data.bolos.length ? data.bolos.map(bolo => <article className={`bolo-card priority-${bolo.priority.toLowerCase()}`} key={bolo.id}><div className="bolo-top"><span>{bolo.bolo_type}</span><Priority value={bolo.priority}/></div><h3>{bolo.subject}</h3><p>{bolo.description}</p><div className="bolo-meta"><span><MapPin/> {bolo.location_grid || 'Citywide'}</span><span>Issued by {bolo.created_by_name || 'System'}</span></div><div className="bolo-actions"><button onClick={() => clearBolo(bolo)}>Mark located</button><button onClick={() => clearBolo(bolo, 'CANCELLED')}>Cancel</button></div></article>) : <Empty text="No active BOLO alerts"/>}</div></section>
 
     {selectedCall && <IncidentDrawer call={selectedCall} units={data.units} onClose={() => setSelectedCallId(null)} onUpdate={patch => updateCall(selectedCall, patch)} onAssign={callsign => assignUnit(selectedCall, callsign)} onNote={note => addNote(selectedCall, note)}/>}
     {modal === 'incident' && <IncidentModal onClose={() => setModal(null)} onSubmit={createIncident}/>}

@@ -257,8 +257,8 @@ export function seedDatabase(db, { demo = true } = {}) {
 
   const assets = [
     ['SHDW','Shadow Industries','Technology','Secure communications, surveillance, and municipal data systems.','#00d9ff',148.25,0.018],
-    ['VYPR','Vyper Motors','Automotive','Performance vehicles and fleet contracts across the island.','#b56cff',82.40,0.026],
-    ['AERO','Everon Aerospace','Industrial','Rotorcraft maintenance, logistics, and precision components.','#ff9f43',116.80,0.021],
+    ['VYPR','Vyper Motors','Automotive','Performance vehicles and municipal fleet contracts across Glenwood.','#b56cff',82.40,0.026],
+    ['AERO','Glenwood Aeronautics','Industrial','Metro aviation maintenance, logistics, and precision components.','#ff9f43',116.80,0.021],
     ['MEDX','Medix Response','Healthcare','Emergency medical equipment and private response services.','#3be38f',64.15,0.014],
     ['NOVA','Nova Energy','Energy','Grid infrastructure, fuel distribution, and renewables.','#ffd166',93.70,0.019],
     ['CRWN','Crown Holdings','Finance','Private banking, insurance, and commercial real estate.','#ff5f8f',205.30,0.012]
@@ -276,4 +276,6 @@ export function seedDatabase(db, { demo = true } = {}) {
       }
     }
   }
+  db.prepare(`UPDATE market_assets SET company_name='Glenwood Aeronautics', description='Metro aviation maintenance, logistics, and precision components.' WHERE symbol='AERO'`).run();
+  db.prepare(`UPDATE market_assets SET description='Performance vehicles and municipal fleet contracts across Glenwood.' WHERE symbol='VYPR'`).run();
 }

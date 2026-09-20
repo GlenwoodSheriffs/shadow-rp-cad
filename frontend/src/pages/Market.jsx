@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, BarChart3, Coins, Landmark, RefreshCw, WalletCards } from 'lucide-react';
 import { api } from '../api.js';
+import { BRAND } from '../brand.js';
 
 const money = value => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
 
@@ -23,9 +24,9 @@ export default function Market() {
     } catch (error) { setMessage(error.message); }
   }
 
-  if (loading) return <div className="market-loading"><BarChart3/><span>Opening Shadow Exchange…</span></div>;
+  if (loading) return <div className="market-loading"><BarChart3/><span>Opening {BRAND.exchange}…</span></div>;
   return <div>
-    <div className="page-heading"><div><p className="eyebrow">SHADOW EXCHANGE · VIRTUAL ECONOMY</p><h1>Market terminal</h1><p>Persistent, fictional server economy. Prices and portfolios survive restarts.</p></div><button className="icon-button" onClick={load}><RefreshCw size={17}/> Market sync</button></div>
+    <div className="page-heading"><div><p className="eyebrow">GLENWOOD EXCHANGE · VIRTUAL CITY ECONOMY</p><h1>Glenwood market terminal</h1><p>Persistent, fictional city economy. Prices and portfolios survive restarts.</p></div><button className="icon-button" onClick={load}><RefreshCw size={17}/> Market sync</button></div>
     {data.linkRequired && <div className="civilian-lock"><Landmark/><div><strong>Trading is locked until your one-time game link is complete</strong><p>You can browse live prices now. Link your Reforger identity to access persistent cash, holdings, and orders.</p></div><a className="button primary" href="#/linking">Link account</a></div>}
     {message && <div className="notice market-notice">{message}</div>}
     <section className="market-hero">
@@ -35,7 +36,7 @@ export default function Market() {
       <div><Coins/><span>OPEN POSITIONS</span><strong>{data.holdings.length}</strong></div>
     </section>
     <div className="market-layout">
-      <section className="panel market-board"><div className="panel-heading"><div><span className="live-dot cyan"/> Shadow Composite</div><small>{data.assets.length} listed companies</small></div>
+      <section className="panel market-board"><div className="panel-heading"><div><span className="live-dot cyan"/> Glenwood Composite</div><small>{data.assets.length} listed companies</small></div>
         <div className="ticker-grid">{data.assets.map(item => <button key={item.symbol} className={`ticker-card ${selected === item.symbol ? 'selected' : ''}`} onClick={() => setSelected(item.symbol)} style={{ '--ticker': item.accent }}>
           <div className="ticker-top"><b>{item.symbol}</b><span className={item.change >= 0 ? 'gain' : 'loss'}>{item.change >= 0 ? <ArrowUpRight/> : <ArrowDownRight/>}{Math.abs(item.change).toFixed(2)}%</span></div>
           <strong>{money(item.price)}</strong><small>{item.company_name}</small><Sparkline values={item.history.map(point => point.price)} color={item.accent}/>
